@@ -1,41 +1,31 @@
 import atm_logger as audit
 import atm_taskdb as taskdb
 
-audit.setup_logging("./logs/")
 
-audit.logging.info('_' * 50)
-audit.logging.info(' ' * 50)
-audit.logging.info(' ' * 13 + 'Automation Task Manager' + ' ' * 14)
-audit.logging.info('_' * 50)
-# audit.logging.info('\n' * 2)
-# audit.logging.debug("debug test message")
-# audit.logging.warning("warning test message")
-# audit.logging.error("error test message")
-# audit.logging.critical("critical test message")
-# audit.logging.info('\n' * 2)
-# audit.logging.info('_' * 50)
+def main():
+    audit.setup_logging("./logs/")
+    audit.print_heading('Automation Task Manager')
+    audit.print_subheading("Task Status List")
+    statusRecords = taskdb.getRecordList("TaskStatus")
 
+    for statusrec in statusRecords:
+        print(statusrec[1])
 
+    audit.print_line()
+    audit.print_subheading("Task Type List")
+    typeRecords = taskdb.getRecordList("TaskType")
 
-print()
-print("Task Status List")
-print("=" * 15)
+    for typerec in typeRecords:
+        print(typerec[1])
 
-# statusRecords = taskdb.getTaskStatusList()
-statusRecords = taskdb.getRecordList("TaskStatus")
-
-for statusrec in statusRecords:
-    print(statusrec[1])
-
-print()
-print("Task Type List")
-print("=" * 15)
-
-# typeRecords = taskdb.getTaskTypeList()
-typeRecords = taskdb.getRecordList("TaskType")
-
-for typerec in typeRecords:
-    print(typerec[1])
+    audit.print_line()
 
 
-print()
+
+
+print ("script name is " + __name__)
+if __name__ == "__main__":
+    main()
+
+
+

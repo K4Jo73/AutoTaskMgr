@@ -3,6 +3,7 @@ import sys
 import mysql.connector
 # run this in cmd or Powershell to install 
 # python -m pip install mysql-connector-python
+print ("script name is " + __name__)
 
 def connectDb():
     db = mysql.connector.connect(

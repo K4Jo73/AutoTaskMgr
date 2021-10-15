@@ -3,13 +3,7 @@ import sys
 import logging
 from logging.handlers import RotatingFileHandler
 
-# Logging levels received
-# info
-# debug
-# warning
-# error
-# critical
-
+print("script name is " + __name__)
 
 
 class CustomFileFormatter(logging.Formatter):
@@ -26,7 +20,7 @@ class CustomFileFormatter(logging.Formatter):
         logging.DEBUG: debug_format,
         logging.INFO: info_format,
         logging.WARNING: warning_format,
-        logging.ERROR:error_format,
+        logging.ERROR: error_format,
         logging.CRITICAL: critical_format
     }
 
@@ -34,7 +28,6 @@ class CustomFileFormatter(logging.Formatter):
         log_fmt = self.FORMATS.get(record.levelno)
         formatter = logging.Formatter(log_fmt)
         return formatter.format(record)
-
 
 
 class CustomFormatter(logging.Formatter):
@@ -70,22 +63,47 @@ def setup_logging(log_dir):
 
     # Main logger
     main_logger = logging.getLogger()
-    main_logger.setLevel(logging.NOTSET) # Stop default console output
+    main_logger.setLevel(logging.NOTSET)  # Stop default console output
 
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.INFO)
     console_handler.setFormatter(CustomFormatter())
 
-    exp_debug_file_handler = RotatingFileHandler('{}exp_debug.log'.format(log_dir), maxBytes=10**6, backupCount=5)
+    exp_debug_file_handler = RotatingFileHandler(
+        '{}exp_debug.log'.format(log_dir), maxBytes=10**6, backupCount=5)
     exp_debug_file_handler.setLevel(logging.DEBUG)
     exp_debug_file_handler.setFormatter(CustomFileFormatter())
 
-    exp_errors_file_handler = RotatingFileHandler('{}exp_error.log'.format(log_dir), maxBytes=10**6, backupCount=5)
+    exp_errors_file_handler = RotatingFileHandler(
+        '{}exp_error.log'.format(log_dir), maxBytes=10**6, backupCount=5)
     exp_errors_file_handler.setLevel(logging.ERROR)
     exp_errors_file_handler.setFormatter(CustomFileFormatter())
 
     main_logger.addHandler(console_handler)
     main_logger.addHandler(exp_debug_file_handler)
-    main_logger.addHandler(exp_errors_file_handler) 
+    main_logger.addHandler(exp_errors_file_handler)
 
-  
+
+def print_heading(name):
+    logging.info('_' * 50)
+    logging.info(' ' * 50)
+    logging.info(' ' * 13 + name + ' ' * 14)
+    logging.info('_' * 50)
+    # logging.info('\n' * 2)
+    # logging.debug("debug test message")
+    # logging.warning("warning test message")
+    # logging.error("error test message")
+    # logging.critical("critical test message")
+    # logging.info('\n' * 2)
+    # logging.info('_' * 50)
+
+
+def print_subheading(name):
+    logging.info('  ')
+    logging.info(name)
+    logging.info('_' * 40)
+
+
+def print_line(width=40):
+    logging.info('_' * width)
+    logging.info('  ')
