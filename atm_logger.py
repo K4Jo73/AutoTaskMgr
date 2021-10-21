@@ -83,6 +83,16 @@ def setup_logging(log_dir):
     main_logger.addHandler(exp_debug_file_handler)
     main_logger.addHandler(exp_errors_file_handler)
 
+    logging.debug(' ' * 50)
+    logging.debug(' ' * 50)
+    logging.debug('#' * 50)
+    logging.debug(' ' * 50)
+    logging.debug(' ' * 10 + ' NEW ROUTINE EXECUTION ' + ' ' * 14)
+    logging.debug(' ' * 50)
+    logging.debug('#' * 50)
+    logging.debug(' ' * 50)
+    logging.debug(' ' * 50)
+
 
 def print_heading(name):
     logging.info('_' * 50)
