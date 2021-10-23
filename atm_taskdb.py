@@ -7,6 +7,7 @@ print("script name is " + __name__)
 
 schemaname = "atm"
 
+
 def connectDb():
     db = mysql.connector.connect(
         host="localhost",
@@ -72,8 +73,7 @@ def getTableColumns(tablename):
         print(rec[0])
 
 
-
-def getID(tablename, criteria="", maxrecords=0):
+def getID(tablename, criteria="", maxrecords=1):
     allrecs = getRecords(tablename, criteria, maxrecords)
     for rec in allrecs:
         logging.debug(tablename + " - " + criteria + " - RETURNED RECORD: " + str(rec))
@@ -108,14 +108,14 @@ def addTask(tasktype,paramlist=None):
                     colnames += separator + param[0]
                     colvalues += separator + "'" + param[1] + "'"
             # sql = "SET autocommit = ON; "
-            sql = "INSERT INTO " + schemaname + ".task_queue (" + colnames + ") VALUES (" + colvalues + ") "
+            sql1 = "INSERT INTO " + schemaname + ".task_queue (" + colnames + ") VALUES (" + colvalues + ") "
             sql2 = "SELECT LAST_INSERT_ID(); "
-            logging.debug(sql)
+            logging.debug(sql1)
             try:
                 dbConnector = connectDb()
                 datacursor = dbConnector.cursor()
                 # datacursor.execute(sql,multi=True)
-                datacursor.execute(sql)
+                datacursor.execute(sql1)
                 """ RATHER THAN DO A MULTI LINE - RUN A SECOND EXECUTE TO GET THE ID """
                 dbConnector.commit()
                 datacursor2 = dbConnector.cursor()
@@ -133,6 +133,54 @@ def addTask(tasktype,paramlist=None):
                 # raise
                 return "Error Saving New Task"
 
+
+def addType(typename,description):
+    sql1 = "INSERT INTO " + schemaname + ".task_type (type_name,type_desc,type_active) VALUES ('" + typename + "','" + description + "',1) "
+    sql2 = "SELECT LAST_INSERT_ID(); "
+    try:
+        dbConnector = connectDb()
+        datacursor = dbConnector.cursor()
+        datacursor.execute(sql1)
+        dbConnector.commit()
+        datacursor2 = dbConnector.cursor()
+        datacursor2.execute(sql2)
+        records = datacursor2.fetchall()
+        id=0
+        for rec in records:
+            id = rec[0]
+            break
+        dbConnector.commit()
+        return id
+
+    except BaseException as err:
+        logging.error(f"Unexpected {err=}, {type(err)=}")
+        # raise
+        return "Error Saving New Task Type"
+
+
+def addStatus(statusname,description,isOpen=1,isHold=0,isError=0):
+    sql1 = "INSERT INTO " + schemaname + ".task_status (status_name,status_desc,status_active,is_open,is_hold,is_error) "
+    sql1 += " VALUES ('" + statusname + "','" + description + "',1," + str(isOpen) + "," + str(isHold) + "," + str(isError) + " ) "
+    sql2 = "SELECT LAST_INSERT_ID(); "
+    try:
+        dbConnector = connectDb()
+        datacursor = dbConnector.cursor()
+        datacursor.execute(sql1)
+        dbConnector.commit()
+        datacursor2 = dbConnector.cursor()
+        datacursor2.execute(sql2)
+        records = datacursor2.fetchall()
+        id=0
+        for rec in records:
+            id = rec[0]
+            break
+        dbConnector.commit()
+        return id
+
+    except BaseException as err:
+        logging.error(f"Unexpected {err=}, {type(err)=}")
+        # raise
+        return "Error Saving New Task Status"
 
 #     INSERT INTO `atm`.`task_queue`
 # (`task_id`,

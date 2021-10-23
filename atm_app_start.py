@@ -6,8 +6,14 @@ def main():
     audit.setup_logging("./logs/")
     audit.print_heading('Automation Task Manager')
 
+    # taskdb.getTableColumns("task_status")
+    # taskdb.addStatus("DoingStuff","test")
     # getPickList("Status")
+    
+    # taskdb.getTableColumns("task_type")
+    # taskdb.addType("DoSomething","test")
     # getPickList("Type")
+
     # taskdb.getTableColumns("task_queue")
     # saveDummyEmptyTask()
     # saveDummyDetailedTask()
@@ -77,7 +83,8 @@ def getPickList(listtype):
     Records = taskdb.getRecords("Task" + listtype)
 
     for rec in Records:
-        print(rec[0], rec[1])
+        # print(rec[0], rec[1])
+        print(rec)
 
     audit.print_line()
    
