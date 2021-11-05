@@ -1,8 +1,8 @@
 import logging
 import sys
 import mysql.connector
-# run this in cmd or Powershell to install
-# python -m pip install mysql-connector-python
+# ! run this in cmd or Powershell to install
+# * python -m pip install mysql-connector-python
 print("script name is " + __name__)
 
 schemaname = "atm"
@@ -47,6 +47,14 @@ def getListSQL(tablename, criteria="", maxrecords=0):
             script += ".task_type"
         case "TaskQueue":
             script += ".task_queue"
+        case "TasksActive":
+            script += ".vw_tasks_active"
+        case "TasksClosed":
+            script += ".vw_tasks_closed"
+        case "TasksHold":
+            script += ".vw_tasks_hold"
+        case "TasksError":
+            script += ".vw_tasks_error"
         case _:
             script = "SELECT 'Invalid List Type Provided [" + tablename + "]';"
             return script

@@ -1,6 +1,14 @@
 import atm_logger as audit
 import atm_taskdb as taskdb
 
+# ? How to do X
+# TODO: Get a batch and process it.
+# TODO: Update progress of a queue record
+# TODO: Schedule a queue record
+# TODO: Allow auto retries
+
+
+
 
 def main():
     audit.setup_logging("./logs/")
@@ -17,7 +25,17 @@ def main():
     # taskdb.getTableColumns("task_queue")
     # saveDummyEmptyTask()
     # saveDummyDetailedTask()
-    # getSomeTasks(10)
+
+
+    taskdb.getTableColumns("vw_tasks_active")
+    recs = getSomeTasks(10)
+    # recs = getSomeTasks(10,"Active")
+    # recs = getSomeTasks(10,"Closed")
+    # recs = getSomeTasks(10,"Error")
+    # recs = getSomeTasks(10,"Hold")
+
+    for r in recs:
+        print(r[1],r[2],r[5])
 
 
 
@@ -25,12 +43,15 @@ def main():
 
 
 
-def getSomeTasks(howmany):
+def getSomeTasks(howmany,status="Active"):
+    if status not in ("Active","Error","Hold","Closed"):
+        audit.logging.info("Forcing Active status - [" + status + "] is NOT valid!")
+        status = "Active"
     audit.print_subheading("Task Queue List Sample")
-    QueueRecords = taskdb.getRecords("TaskQueue","",howmany)
+    QueueRecords = taskdb.getRecords("Tasks"+status,"",howmany)
 
-    for queuerec in QueueRecords:
-        print(queuerec)
+    # for queuerec in QueueRecords:
+    #     print(queuerec)
 
     return QueueRecords
 
