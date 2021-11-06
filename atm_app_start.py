@@ -1,11 +1,17 @@
 import atm_logger as audit
 import atm_taskdb as taskdb
+from datetime import datetime
+
+taskBatchSize = 3 
 
 # ? How to do X
-# TODO: Get a batch and process it.
+# * Get a batch DONE!
+# TODO: Process the selected batch
 # TODO: Update progress of a queue record
 # TODO: Schedule a queue record
 # TODO: Allow auto retries
+# TODO: Sometimes need to remove batch_id value to allow re-selection
+# TODO: Abiltiy to email notifications or reports
 
 
 
@@ -27,33 +33,54 @@ def main():
     # saveDummyDetailedTask()
 
 
-    taskdb.getTableColumns("vw_tasks_active")
-    recs = getSomeTasks(10)
+    # taskdb.getTableColumns("vw_tasks_active")
+    # recs = getSomeTasks(10)
     # recs = getSomeTasks(10,"Active")
     # recs = getSomeTasks(10,"Closed")
     # recs = getSomeTasks(10,"Error")
     # recs = getSomeTasks(10,"Hold")
 
-    for r in recs:
-        print(r[1],r[2],r[5])
+    # for r in recs:
+    #     print(r[1],r[2],r[5])
+
+    batchToDo = getTaskBatch(taskBatchSize)  
+    audit.logging.debug(batchToDo)
 
 
 
 
+def getTaskBatch(batchSize):
+    date_string = f'{datetime.now():%Y-%m-%d_%H:%M:%S%z}'
+    thisBatchId = "Batch_"+date_string
+    audit.logging.debug("Batch ID: "+thisBatchId)
+
+    validStatusIDs = taskdb.getRecords("TaskStatus","is_open=1 and is_hold=0 and is_error=0 and is_progress=0")
+
+    statusIdList = ""
+    separator = ""
+    for ids in validStatusIDs:
+        statusIdList += separator + str(ids[0])
+        separator = ", "
+        audit.logging.debug("Valid Status ID: "+str(ids[0])+" - "+str(ids[1]))
+    audit.logging.debug("Batch Status ID List: "+statusIdList)
+
+    param1 = ("batch_id",thisBatchId)
+    paramslist = []
+    paramslist.append(param1)
+    recsToBatch = taskdb.updateTasks("batch_id is NULL and task_status in ("+statusIdList+")",paramslist,batchSize)
+
+    if recsToBatch == "Records Updated":
+        queueRecords = taskdb.getRecords("TaskQueue","batch_id = '"+thisBatchId+"'",batchSize)
+
+    audit.logging.debug("Queue Recs In This Batch")
+    for r in queueRecords:
+        audit.logging.debug(r)
+
+    return queueRecords
+
+   
 
 
-
-def getSomeTasks(howmany,status="Active"):
-    if status not in ("Active","Error","Hold","Closed"):
-        audit.logging.info("Forcing Active status - [" + status + "] is NOT valid!")
-        status = "Active"
-    audit.print_subheading("Task Queue List Sample")
-    QueueRecords = taskdb.getRecords("Tasks"+status,"",howmany)
-
-    # for queuerec in QueueRecords:
-    #     print(queuerec)
-
-    return QueueRecords
 
 
 def saveDummyEmptyTask():

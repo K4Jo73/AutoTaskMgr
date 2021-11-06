@@ -36,28 +36,31 @@ def getRecords(tablename, criteria="", maxrecords=0):
         # raise
 
 
-def getListSQL(tablename, criteria="", maxrecords=0):
+def getListSQL(tablename, criteria="", maxrecords=0, isselect=1):
     
-    script = "SELECT * FROM " + schemaname
+    script = ""
 
-    match tablename:
-        case "TaskStatus":
-            script += ".task_status"
-        case "TaskType":
-            script += ".task_type"
-        case "TaskQueue":
-            script += ".task_queue"
-        case "TasksActive":
-            script += ".vw_tasks_active"
-        case "TasksClosed":
-            script += ".vw_tasks_closed"
-        case "TasksHold":
-            script += ".vw_tasks_hold"
-        case "TasksError":
-            script += ".vw_tasks_error"
-        case _:
-            script = "SELECT 'Invalid List Type Provided [" + tablename + "]';"
-            return script
+    if isselect == 1:
+        script = "SELECT * FROM " + schemaname
+
+        match tablename:
+            case "TaskStatus":
+                script += ".task_status"
+            case "TaskType":
+                script += ".task_type"
+            case "TaskQueue":
+                script += ".task_queue"
+            case "TasksActive":
+                script += ".vw_tasks_active"
+            case "TasksClosed":
+                script += ".vw_tasks_closed"
+            case "TasksHold":
+                script += ".vw_tasks_hold"
+            case "TasksError":
+                script += ".vw_tasks_error"
+            case _:
+                script = "SELECT 'Invalid List Type Provided [" + tablename + "]';"
+                return script
 
     if criteria != "":
         script += " WHERE " + criteria
@@ -81,11 +84,47 @@ def getTableColumns(tablename):
         print(rec[0])
 
 
+
 def getID(tablename, criteria="", maxrecords=1):
     allrecs = getRecords(tablename, criteria, maxrecords)
     for rec in allrecs:
         logging.debug(tablename + " - " + criteria + " - RETURNED RECORD: " + str(rec))
         return rec[0]
+
+
+
+def updateTasks(criteria, paramlist, maxrecords):
+    logging.info("Received parameters:")
+    UpdateList = ""
+    for p in paramlist:
+        logging.info("\tProperty:" + p[0] + "\t\t" + "Value:" + p[1])
+        UpdateList += p[0]+" = '"+p[1]+"'"
+    logging.info("Received Criteria: "+criteria)
+    logging.info("SET String: "+UpdateList)
+
+    # update  table
+    # set     status = 1
+    # where   status = 2
+    # ORDER BY id
+    # LIMIT 400
+
+    try:
+        dbConnector = connectDb()
+        datacursor = dbConnector.cursor()
+        sql = getListSQL("TaskQueue", criteria, maxrecords,isselect=0)
+        sql = "UPDATE "+schemaname+".task_queue SET "+UpdateList+" "+sql
+        logging.debug(sql)
+        datacursor.execute(sql)
+        dbConnector.commit()
+        return "Records Updated"
+
+    except BaseException as err:
+        logging.error(f"Unexpected {err=}, {type(err)=}")
+        # raise
+   
+
+
+
 
 
 def addTask(tasktype,paramlist=None):
