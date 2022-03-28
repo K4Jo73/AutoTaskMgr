@@ -1,0 +1,10 @@
+"status_id";"status_name";"status_desc";"status_active";"is_open";"is_hold";"is_error";"is_progress"
+1;"New_Pending";"Newly added to the register not yet processed";1;1;0;0;0
+2;"Ready_Scheduled";"Has been on hold or initially scheduled for later execution and is now ready to be processed";1;1;0;0;0
+3;"In_Progress";"Has been picked up and is being worked on";1;1;0;0;1
+4;"On_Hold";"Parked to be processed later";1;1;1;0;0
+5;"Paused_Scheduled";"Parked to wait for a specific time to be processed later";1;1;1;0;0
+6;"Completed_Success";"Task fully completed without issue";1;0;0;0;0
+7;"Failed_Error";"Task was not completed properly and can not be re-procesed";1;0;0;1;0
+8;"Completed_MinorIssues";"Task completed but some minor non-critical errors were experiencd";1;0;0;0;0
+9;"DoingStuff";"test";1;1;0;0;1
