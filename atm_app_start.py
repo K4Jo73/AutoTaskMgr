@@ -44,7 +44,7 @@ def main():
     #     print(r[1],r[2],r[5])
 
     batchToDo = getTaskBatch(taskBatchSize)  
-    audit.logging.debug(batchToDo)
+    audit.logging.info(batchToDo)
 
 
 
