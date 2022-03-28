@@ -68,6 +68,9 @@ def setup_logging(log_dir):
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.INFO)
     console_handler.setFormatter(CustomFormatter())
+    
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
 
     exp_debug_file_handler = RotatingFileHandler(
         '{}exp_debug.log'.format(log_dir), maxBytes=10**6, backupCount=5)
