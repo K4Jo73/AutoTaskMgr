@@ -50,16 +50,25 @@ def main():
     # audit.logging.info(batchToDo)
 
 
+    listActiveBatches()
+    print("")
     manageActiveBatches()
 
 
-
+def listActiveBatches():
+    ActiveBatches = getTaskActiveBatchIDs()
+    # audit.logging.info(ActiveBatches)
+    audit.logging.info("Current active batches....")
+    print("")
+    for r in ActiveBatches:
+        # audit.logging.info(r[0])
+        audit.logging.info("["+r[0]+"n]")
     
 
 def manageActiveBatches():
     ActiveBatches = getTaskActiveBatchIDs()
     # audit.logging.info(ActiveBatches)
-    audit.logging.info("Current active batches....")
+    audit.logging.info("Current active batches to manage....")
     print("")
     for r in ActiveBatches:
         # audit.logging.info(r[0])
