@@ -1,5 +1,7 @@
+from tkinter import Y
 import atm_logger as audit
 import atm_taskdb as taskdb
+import atm_common as common
 from datetime import datetime
 
 taskBatchSize = 3 
@@ -46,21 +48,46 @@ def main():
 
     # batchToDo = getTaskBatch(taskBatchSize)  
     # audit.logging.info(batchToDo)
+
+
+    manageActiveBatches()
+
+
+
     
+
+def manageActiveBatches():
     ActiveBatches = getTaskActiveBatchIDs()
     # audit.logging.info(ActiveBatches)
     audit.logging.info("Current active batches....")
+    print("")
     for r in ActiveBatches:
-        audit.logging.info(r[0])
+        # audit.logging.info(r[0])
+        takeAction = "["+r[0]+"n] Take action on this batch?"
+        actionAnswer = common.yes_or_no(takeAction)
+        audit.logging.debug(takeAction + " :" + str(actionAnswer))
+        if actionAnswer == True:
+            cancelBatch = "\tCancel this batch?"
+            cancelAnswer = common.yes_or_no(cancelBatch)
+            audit.logging.debug(cancelBatch + " :" + str(cancelAnswer))
+            if cancelAnswer == True:
+                audit.logging.info("\t\tCancelling ["+r[0]+"]...")
+            else:
+                resetBatch = "\tReset this batch?"
+                resetAnswer = common.yes_or_no(resetBatch)
+                audit.logging.debug(resetBatch + " :" + str(resetAnswer))
+                if resetAnswer == True:
+                    audit.logging.info("\t\tResetting ["+r[0]+"]...")
+        print("")
+
+
 
 
 
 def getTaskActiveBatchIDs():
-    audit.logging.info("starting")
     queueRecords = taskdb.getCustomRecordList("Select batch_id FROM atm.vw_tasks_active WHERE batch_id IS NOT NULL Group By batch_id")
     for r in queueRecords:
-        audit.logging.debug(r)
-    audit.logging.info("finished")
+        audit.logging.debug(r[0])
     return queueRecords
 
 
