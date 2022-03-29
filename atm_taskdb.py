@@ -19,6 +19,22 @@ def connectDb():
     return db
 
 
+
+def getCustomRecordList(sql):
+    try:
+        dbConnector = connectDb()
+        datacursor = dbConnector.cursor()
+        logging.debug("script: " + sql)
+        datacursor.execute(sql)
+        records = datacursor.fetchall()
+        logging.debug(sql + " - record query returned " +
+                  str(datacursor.rowcount) + " rows")
+        return records
+
+    except BaseException as err:
+        logging.error(f"Unexpected {err=}, {type(err)=}")
+        # raise
+
 def getRecords(tablename, criteria="", maxrecords=0):
     try:
         dbConnector = connectDb()

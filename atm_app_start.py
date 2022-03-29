@@ -34,6 +34,7 @@ def main():
 
 
     # taskdb.getTableColumns("vw_tasks_active")
+    # taskdb.getTableColumns("task_queue")
     # recs = getSomeTasks(10)
     # recs = getSomeTasks(10,"Active")
     # recs = getSomeTasks(10,"Closed")
@@ -43,14 +44,30 @@ def main():
     # for r in recs:
     #     print(r[1],r[2],r[5])
 
-    batchToDo = getTaskBatch(taskBatchSize)  
-    audit.logging.info(batchToDo)
+    # batchToDo = getTaskBatch(taskBatchSize)  
+    # audit.logging.info(batchToDo)
+    
+    ActiveBatches = getTaskActiveBatchIDs()
+    # audit.logging.info(ActiveBatches)
+    audit.logging.info("Current active batches....")
+    for r in ActiveBatches:
+        audit.logging.info(r[0])
+
+
+
+def getTaskActiveBatchIDs():
+    audit.logging.info("starting")
+    queueRecords = taskdb.getCustomRecordList("Select batch_id FROM atm.vw_tasks_active WHERE batch_id IS NOT NULL Group By batch_id")
+    for r in queueRecords:
+        audit.logging.debug(r)
+    audit.logging.info("finished")
+    return queueRecords
 
 
 
 
 def getTaskBatch(batchSize):
-    date_string = f'{datetime.now():%Y-%m-%d_%H:%M:%S%z}'
+    date_string = f'{datetime.now():%Y-%m-%d_%H-%M-%S%z}'
     thisBatchId = "Batch_"+date_string
     audit.logging.debug("Batch ID: "+thisBatchId)
 
