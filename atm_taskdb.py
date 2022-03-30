@@ -1,6 +1,8 @@
 import logging
 import sys
 import mysql.connector
+from datetime import datetime
+
 # ! run this in cmd or Powershell to install
 # * python -m pip install mysql-connector-python
 print("script name is " + __name__)
@@ -112,12 +114,16 @@ def getID(tablename, criteria="", maxrecords=1):
 def updateTasks(criteria, paramlist, maxrecords):
     logging.info("Received parameters:")
     UpdateList = ""
+    listSeparator = ""
     for p in paramlist:
         logging.info("\tProperty:" + p[0] + "\t\t" + "Value:" + p[1])
-        UpdateList += p[0]+" = '"+p[1]+"'"
+        UpdateList += listSeparator+p[0]+" = '"+p[1]+"'"
+        listSeparator = ","
     logging.info("Received Criteria: "+criteria)
     logging.info("SET String: "+UpdateList)
 
+    UpdateList += listSeparator+"updated_on='"+str(datetime.now())+"'"
+    logging.debug("Generated Update List:"+UpdateList)
     # update  table
     # set     status = 1
     # where   status = 2
@@ -158,7 +164,7 @@ def addTask(tasktype,paramlist=None):
     else:
         print("Getting StatusID")
         statusID = getID(tablename="TaskStatus", criteria="status_name = 'New_Pending'", maxrecords=1)
-        logging.debug("TaskType:" + tasktype + " ID:" + str(statusID))
+        logging.debug("StatusName:'New_Pending' ID:" + str(statusID))
         if statusID is None:
             logging.error("NO TASK STATUS RECORD FOUND!")
             return "Failed - Bad Status ID"

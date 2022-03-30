@@ -8,3 +8,4 @@
 7;"Failed_Error";"Task was not completed properly and can not be re-procesed";1;0;0;1;0
 8;"Completed_MinorIssues";"Task completed but some minor non-critical errors were experiencd";1;0;0;0;0
 9;"DoingStuff";"test";1;1;0;0;1
+10;"Cancelled";"Task is no longer required";1;0;0;0;0

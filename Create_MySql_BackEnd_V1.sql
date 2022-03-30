@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `atm`.`task_status` (
   PRIMARY KEY (`status_id`),
   UNIQUE INDEX `status_name_UNIQUE` (`status_name` ASC) VISIBLE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 10
+AUTO_INCREMENT = 11
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `atm`.`task_type` (
   PRIMARY KEY (`type_id`),
   UNIQUE INDEX `type_name_UNIQUE` (`type_name` ASC) VISIBLE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 4
+AUTO_INCREMENT = 6
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -72,6 +72,9 @@ CREATE TABLE IF NOT EXISTS `atm`.`task_queue` (
   `closed_on` DATETIME NULL DEFAULT NULL,
   `activity_param01` VARCHAR(150) NULL DEFAULT NULL,
   `activity_param02` VARCHAR(150) NULL DEFAULT NULL,
+  `activity_param03` VARCHAR(150) NULL DEFAULT NULL,
+  `activity_param04` VARCHAR(150) NULL DEFAULT NULL,
+  `activity_param05` VARCHAR(150) NULL DEFAULT NULL,
   PRIMARY KEY (`task_id`),
   INDEX `fk_tasktype_idx` (`task_type` ASC) VISIBLE,
   INDEX `fk_taskstatus_idx` (`task_status` ASC) VISIBLE,
@@ -82,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `atm`.`task_queue` (
     FOREIGN KEY (`task_type`)
     REFERENCES `atm`.`task_type` (`type_id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 79
+AUTO_INCREMENT = 87
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -91,50 +94,50 @@ USE `atm` ;
 -- -----------------------------------------------------
 -- Placeholder table for view `atm`.`vw_tasks_active`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `atm`.`vw_tasks_active` (`task_id` INT, `status_name` INT, `type_name` INT, `created_on` INT, `updated_on` INT, `note` INT, `scheduled_for` INT, `source_ref` INT, `source_id` INT, `closure_ref` INT, `closure_id` INT, `closed_on` INT, `status_id` INT, `batch_id` INT);
+CREATE TABLE IF NOT EXISTS `atm`.`vw_tasks_active` (`task_id` INT, `status_name` INT, `type_name` INT, `created_on` INT, `updated_on` INT, `note` INT, `scheduled_for` INT, `source_ref` INT, `source_id` INT, `closure_ref` INT, `closure_id` INT, `closed_on` INT, `status_id` INT, `batch_id` INT, `activity_param01` INT, `activity_param02` INT, `activity_param03` INT, `activity_param04` INT, `activity_param05` INT);
 
 -- -----------------------------------------------------
 -- Placeholder table for view `atm`.`vw_tasks_closed`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `atm`.`vw_tasks_closed` (`task_id` INT, `status_name` INT, `type_name` INT, `created_on` INT, `updated_on` INT, `note` INT, `scheduled_for` INT, `source_ref` INT, `source_id` INT, `closure_ref` INT, `closure_id` INT, `closed_on` INT, `status_id` INT, `batch_id` INT);
+CREATE TABLE IF NOT EXISTS `atm`.`vw_tasks_closed` (`task_id` INT, `status_name` INT, `type_name` INT, `created_on` INT, `updated_on` INT, `note` INT, `scheduled_for` INT, `source_ref` INT, `source_id` INT, `closure_ref` INT, `closure_id` INT, `closed_on` INT, `status_id` INT, `batch_id` INT, `activity_param01` INT, `activity_param02` INT, `activity_param03` INT, `activity_param04` INT, `activity_param05` INT);
 
 -- -----------------------------------------------------
 -- Placeholder table for view `atm`.`vw_tasks_error`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `atm`.`vw_tasks_error` (`task_id` INT, `status_name` INT, `type_name` INT, `created_on` INT, `updated_on` INT, `note` INT, `scheduled_for` INT, `source_ref` INT, `source_id` INT, `closure_ref` INT, `closure_id` INT, `closed_on` INT, `status_id` INT, `batch_id` INT);
+CREATE TABLE IF NOT EXISTS `atm`.`vw_tasks_error` (`task_id` INT, `status_name` INT, `type_name` INT, `created_on` INT, `updated_on` INT, `note` INT, `scheduled_for` INT, `source_ref` INT, `source_id` INT, `closure_ref` INT, `closure_id` INT, `closed_on` INT, `status_id` INT, `batch_id` INT, `activity_param01` INT, `activity_param02` INT, `activity_param03` INT, `activity_param04` INT, `activity_param05` INT);
 
 -- -----------------------------------------------------
 -- Placeholder table for view `atm`.`vw_tasks_hold`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `atm`.`vw_tasks_hold` (`task_id` INT, `status_name` INT, `type_name` INT, `created_on` INT, `updated_on` INT, `note` INT, `scheduled_for` INT, `source_ref` INT, `source_id` INT, `closure_ref` INT, `closure_id` INT, `closed_on` INT, `status_id` INT, `batch_id` INT);
+CREATE TABLE IF NOT EXISTS `atm`.`vw_tasks_hold` (`task_id` INT, `status_name` INT, `type_name` INT, `created_on` INT, `updated_on` INT, `note` INT, `scheduled_for` INT, `source_ref` INT, `source_id` INT, `closure_ref` INT, `closure_id` INT, `closed_on` INT, `status_id` INT, `batch_id` INT, `activity_param01` INT, `activity_param02` INT, `activity_param03` INT, `activity_param04` INT, `activity_param05` INT);
 
 -- -----------------------------------------------------
 -- View `atm`.`vw_tasks_active`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `atm`.`vw_tasks_active`;
 USE `atm`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `atm`.`vw_tasks_active` AS select `q`.`task_id` AS `task_id`,`s`.`status_name` AS `status_name`,`t`.`type_name` AS `type_name`,`q`.`created_on` AS `created_on`,`q`.`updated_on` AS `updated_on`,`q`.`note` AS `note`,`q`.`scheduled_for` AS `scheduled_for`,`q`.`source_ref` AS `source_ref`,`q`.`source_id` AS `source_id`,`q`.`closure_ref` AS `closure_ref`,`q`.`closure_id` AS `closure_id`,`q`.`closed_on` AS `closed_on`,`s`.`status_id` AS `status_id`,`q`.`batch_id` AS `batch_id` from ((`atm`.`task_queue` `q` join `atm`.`task_status` `s` on((`q`.`task_status` = `s`.`status_id`))) join `atm`.`task_type` `t` on((`q`.`task_type` = `t`.`type_id`))) where (`s`.`is_open` = 1);
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `atm`.`vw_tasks_active` AS select `q`.`task_id` AS `task_id`,`s`.`status_name` AS `status_name`,`t`.`type_name` AS `type_name`,`q`.`created_on` AS `created_on`,`q`.`updated_on` AS `updated_on`,`q`.`note` AS `note`,`q`.`scheduled_for` AS `scheduled_for`,`q`.`source_ref` AS `source_ref`,`q`.`source_id` AS `source_id`,`q`.`closure_ref` AS `closure_ref`,`q`.`closure_id` AS `closure_id`,`q`.`closed_on` AS `closed_on`,`s`.`status_id` AS `status_id`,`q`.`batch_id` AS `batch_id`,`q`.`activity_param01` AS `activity_param01`,`q`.`activity_param02` AS `activity_param02`,`q`.`activity_param03` AS `activity_param03`,`q`.`activity_param04` AS `activity_param04`,`q`.`activity_param05` AS `activity_param05` from ((`atm`.`task_queue` `q` join `atm`.`task_status` `s` on((`q`.`task_status` = `s`.`status_id`))) join `atm`.`task_type` `t` on((`q`.`task_type` = `t`.`type_id`))) where (`s`.`is_open` = 1);
 
 -- -----------------------------------------------------
 -- View `atm`.`vw_tasks_closed`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `atm`.`vw_tasks_closed`;
 USE `atm`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `atm`.`vw_tasks_closed` AS select `q`.`task_id` AS `task_id`,`s`.`status_name` AS `status_name`,`t`.`type_name` AS `type_name`,`q`.`created_on` AS `created_on`,`q`.`updated_on` AS `updated_on`,`q`.`note` AS `note`,`q`.`scheduled_for` AS `scheduled_for`,`q`.`source_ref` AS `source_ref`,`q`.`source_id` AS `source_id`,`q`.`closure_ref` AS `closure_ref`,`q`.`closure_id` AS `closure_id`,`q`.`closed_on` AS `closed_on`,`s`.`status_id` AS `status_id`,`q`.`batch_id` AS `batch_id` from ((`atm`.`task_queue` `q` join `atm`.`task_status` `s` on((`q`.`task_status` = `s`.`status_id`))) join `atm`.`task_type` `t` on((`q`.`task_type` = `t`.`type_id`))) where (`s`.`is_open` = 0);
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `atm`.`vw_tasks_closed` AS select `q`.`task_id` AS `task_id`,`s`.`status_name` AS `status_name`,`t`.`type_name` AS `type_name`,`q`.`created_on` AS `created_on`,`q`.`updated_on` AS `updated_on`,`q`.`note` AS `note`,`q`.`scheduled_for` AS `scheduled_for`,`q`.`source_ref` AS `source_ref`,`q`.`source_id` AS `source_id`,`q`.`closure_ref` AS `closure_ref`,`q`.`closure_id` AS `closure_id`,`q`.`closed_on` AS `closed_on`,`s`.`status_id` AS `status_id`,`q`.`batch_id` AS `batch_id`,`q`.`activity_param01` AS `activity_param01`,`q`.`activity_param02` AS `activity_param02`,`q`.`activity_param03` AS `activity_param03`,`q`.`activity_param04` AS `activity_param04`,`q`.`activity_param05` AS `activity_param05` from ((`atm`.`task_queue` `q` join `atm`.`task_status` `s` on((`q`.`task_status` = `s`.`status_id`))) join `atm`.`task_type` `t` on((`q`.`task_type` = `t`.`type_id`))) where (`s`.`is_open` = 0);
 
 -- -----------------------------------------------------
 -- View `atm`.`vw_tasks_error`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `atm`.`vw_tasks_error`;
 USE `atm`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `atm`.`vw_tasks_error` AS select `q`.`task_id` AS `task_id`,`s`.`status_name` AS `status_name`,`t`.`type_name` AS `type_name`,`q`.`created_on` AS `created_on`,`q`.`updated_on` AS `updated_on`,`q`.`note` AS `note`,`q`.`scheduled_for` AS `scheduled_for`,`q`.`source_ref` AS `source_ref`,`q`.`source_id` AS `source_id`,`q`.`closure_ref` AS `closure_ref`,`q`.`closure_id` AS `closure_id`,`q`.`closed_on` AS `closed_on`,`s`.`status_id` AS `status_id`,`q`.`batch_id` AS `batch_id` from ((`atm`.`task_queue` `q` join `atm`.`task_status` `s` on((`q`.`task_status` = `s`.`status_id`))) join `atm`.`task_type` `t` on((`q`.`task_type` = `t`.`type_id`))) where (`s`.`is_error` = 1);
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `atm`.`vw_tasks_error` AS select `q`.`task_id` AS `task_id`,`s`.`status_name` AS `status_name`,`t`.`type_name` AS `type_name`,`q`.`created_on` AS `created_on`,`q`.`updated_on` AS `updated_on`,`q`.`note` AS `note`,`q`.`scheduled_for` AS `scheduled_for`,`q`.`source_ref` AS `source_ref`,`q`.`source_id` AS `source_id`,`q`.`closure_ref` AS `closure_ref`,`q`.`closure_id` AS `closure_id`,`q`.`closed_on` AS `closed_on`,`s`.`status_id` AS `status_id`,`q`.`batch_id` AS `batch_id`,`q`.`activity_param01` AS `activity_param01`,`q`.`activity_param02` AS `activity_param02`,`q`.`activity_param03` AS `activity_param03`,`q`.`activity_param04` AS `activity_param04`,`q`.`activity_param05` AS `activity_param05` from ((`atm`.`task_queue` `q` join `atm`.`task_status` `s` on((`q`.`task_status` = `s`.`status_id`))) join `atm`.`task_type` `t` on((`q`.`task_type` = `t`.`type_id`))) where (`s`.`is_error` = 1);
 
 -- -----------------------------------------------------
 -- View `atm`.`vw_tasks_hold`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `atm`.`vw_tasks_hold`;
 USE `atm`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `atm`.`vw_tasks_hold` AS select `q`.`task_id` AS `task_id`,`s`.`status_name` AS `status_name`,`t`.`type_name` AS `type_name`,`q`.`created_on` AS `created_on`,`q`.`updated_on` AS `updated_on`,`q`.`note` AS `note`,`q`.`scheduled_for` AS `scheduled_for`,`q`.`source_ref` AS `source_ref`,`q`.`source_id` AS `source_id`,`q`.`closure_ref` AS `closure_ref`,`q`.`closure_id` AS `closure_id`,`q`.`closed_on` AS `closed_on`,`s`.`status_id` AS `status_id`,`q`.`batch_id` AS `batch_id` from ((`atm`.`task_queue` `q` join `atm`.`task_status` `s` on((`q`.`task_status` = `s`.`status_id`))) join `atm`.`task_type` `t` on((`q`.`task_type` = `t`.`type_id`))) where (`s`.`is_hold` = 1);
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `atm`.`vw_tasks_hold` AS select `q`.`task_id` AS `task_id`,`s`.`status_name` AS `status_name`,`t`.`type_name` AS `type_name`,`q`.`created_on` AS `created_on`,`q`.`updated_on` AS `updated_on`,`q`.`note` AS `note`,`q`.`scheduled_for` AS `scheduled_for`,`q`.`source_ref` AS `source_ref`,`q`.`source_id` AS `source_id`,`q`.`closure_ref` AS `closure_ref`,`q`.`closure_id` AS `closure_id`,`q`.`closed_on` AS `closed_on`,`s`.`status_id` AS `status_id`,`q`.`batch_id` AS `batch_id`,`q`.`activity_param01` AS `activity_param01`,`q`.`activity_param02` AS `activity_param02`,`q`.`activity_param03` AS `activity_param03`,`q`.`activity_param04` AS `activity_param04`,`q`.`activity_param05` AS `activity_param05` from ((`atm`.`task_queue` `q` join `atm`.`task_status` `s` on((`q`.`task_status` = `s`.`status_id`))) join `atm`.`task_type` `t` on((`q`.`task_type` = `t`.`type_id`))) where (`s`.`is_hold` = 1);
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
