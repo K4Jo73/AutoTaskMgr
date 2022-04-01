@@ -48,23 +48,7 @@ def manageActiveBatches():
                     UpdTaskResult = setTaskClosed(upd[0],"Cancelled","Admin Cancelled")
                     if UpdTaskResult == True:
                         # Do more stuff here
-                        audit.logging.info("Yay!")
-                # paramslist = []
-                # param = ("closed_on",str(datetime.now()))
-                # paramslist.append(param)
-                # param = ("closure_id","N\A")
-                # paramslist.append(param)
-                # param = ("closure_ref","Admin Cancelled")
-                # paramslist.append(param)
-                # statusID = taskdb.getID(tablename="TaskStatus", criteria="status_name = 'Cancelled'", maxrecords=1)
-                # param = ("task_status",str(statusID))
-                # paramslist.append(param)
-                # recsToUpdate = taskdb.updateTasks("batch_id='"+r[0]+"'",paramslist,0)
-                # if recsToUpdate == "Records Updated":
-                #     queueRecordsUpdated = taskdb.getRecords("TaskQueue","batch_id = '"+r[0]+"'",0)
-                #     audit.logging.debug("Cancelled records....")
-                #     for upd in queueRecordsUpdated:
-                #         audit.logging.debug(upd)
+                        audit.logging.info("Batch ["+r[0]+"]Cancelled")
 
             else:
                 resetBatch = "\t\tReset this batch?"
@@ -103,7 +87,7 @@ def getTaskActiveByBatchID(BatchID):
     sql = "Select * FROM atm.vw_tasks_active WHERE batch_id='"+BatchID+"'"
     queueRecords = taskdb.getCustomRecordList(sql)
     for r in queueRecords:
-        audit.logging.debug(r[0])
+        audit.logging.debug("Retrieved batch record with ID: "+str(r[0]))
     return queueRecords
 
 
@@ -112,7 +96,7 @@ def getTaskActiveBatchIDs():
     sql = "Select batch_id FROM atm.vw_tasks_active WHERE batch_id IS NOT NULL Group By batch_id"
     queueRecords = taskdb.getCustomRecordList(sql)
     for r in queueRecords:
-        audit.logging.debug(r[0])
+        audit.logging.debug("Retrieved batch ID: "+str(r[0]))
     return queueRecords
 
 

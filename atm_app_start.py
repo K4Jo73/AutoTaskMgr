@@ -16,6 +16,8 @@ taskBatchSize = 3
 # TODO: Allow auto retries
 # TODO: Sometimes need to remove batch_id value to allow re-selection
 # TODO: Abiltiy to email notifications or reports
+# DONE: Cancel a batch
+# TODO: Cancel a single task
 
 
 
@@ -25,7 +27,7 @@ def main():
     audit.print_heading('Automation Task Manager')
 
     # taskdb.getTableColumns("task_status")
-    # taskdb.addStatus("DoingStuff","test")
+    # taskdb.addStatus("DoingEvenMoreStuff","test")
     # taskmgr.getPickList("Status")
     
     # taskdb.getTableColumns("task_type")
@@ -35,9 +37,11 @@ def main():
     # taskdb.getTableColumns("task_queue")
     # saveDummyEmptyTask()
     # saveDummyDetailedTask()
+    # saveDummyDetailedTask()
+    # saveDummyDetailedTask()
 
 
-    taskdb.getTableColumns("vw_tasks_active")
+    # taskdb.getTableColumns("vw_tasks_active")
     # taskdb.getTableColumns("task_queue")
 
     # for r in recs:
@@ -45,9 +49,20 @@ def main():
 
     # batchToDo = taskmgr.getTaskBatch(taskBatchSize)  
     # audit.logging.info(batchToDo)
+    # print("")
+    # audit.logging.info("Batch Records")
+    # print('=' * 50)
+    # for rec in batchToDo:
+    #     audit.logging.info("ID: "+str(rec[0]))
+    #     audit.logging.info("BatchID: "+str(rec[1]))
+    #     audit.logging.info("Note: "+str(rec[4]))
+    #     audit.logging.info("Source Ref: "+str(rec[8]))
+    #     print('-' * 50)
+    # print("")
 
 
-    # taskmgr.listActiveBatches()
+
+    taskmgr.listActiveBatches()
     print("")
     taskmgr.manageActiveBatches()
 
