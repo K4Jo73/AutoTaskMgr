@@ -14,11 +14,12 @@ taskBatchSize = 3
 # TODO: Update progress of a queue record
 # TODO: Schedule a queue record
 # TODO: Allow auto retries
-# TODO: Sometimes need to remove batch_id value to allow re-selection
+# DONE: Sometimes need to remove batch_id value to allow re-selection to "RESET"
 # DONE: Abiltiy to email notifications or reports
 # DONE: Cancel a batch
 # TODO: Cancel a single task
-
+# TODO: Get email function to work with exchange
+# TODO: Storage and use of passwords
 
 
 
@@ -64,9 +65,9 @@ def main():
 
     taskmgr.listActiveBatches()
     print("")
-    # taskmgr.manageActiveBatches()
+    taskmgr.manageActiveBatches()
 
-    common.send_Mail("karl.jones@capgemini.com","Something happened")
+    # common.send_Mail("karl.jones@capgemini.com","Something happened")
 
 
    

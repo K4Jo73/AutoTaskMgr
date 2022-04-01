@@ -98,7 +98,10 @@ def updateTasks(criteria, paramlist, maxrecords):
     listSeparator = ""
     for p in paramlist:
         audit.logging.info("\tProperty:" + p[0] + "\t\t" + "Value:" + p[1])
-        UpdateList += listSeparator+p[0]+" = '"+p[1]+"'"
+        if p[1] != "NULL":
+            UpdateList += listSeparator+p[0]+" = '"+p[1]+"'"
+        else:
+            UpdateList += listSeparator+p[0]+" = NULL"
         listSeparator = ","
     audit.logging.info("Received Criteria: "+criteria)
     audit.logging.info("SET String: "+UpdateList)

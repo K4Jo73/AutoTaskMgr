@@ -23,7 +23,6 @@ def listActiveBatches():
 def manageActiveBatches():
     audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
     ActiveBatches = getTaskActiveBatchIDs()
-    # audit.logging.info(ActiveBatches)
     audit.logging.info("Current active batches to manage....")
     print("")
     for r in ActiveBatches:
@@ -31,7 +30,6 @@ def manageActiveBatches():
         recordsForBatch = getTaskActiveByBatchID(r[0])
         for batchrecs in recordsForBatch:
             audit.logging.info("\tID: "+str(batchrecs[0])+"\tStatus: "+batchrecs[1]+"\tTask Type: "+batchrecs[2])
-        # audit.logging.info(r[0])
         takeAction = "\tTake action on this batch?"
         actionAnswer = common.yes_or_no(takeAction)
         audit.logging.debug(takeAction + " :" + str(actionAnswer))
@@ -48,7 +46,7 @@ def manageActiveBatches():
                     UpdTaskResult = setTaskClosed(upd[0],"Cancelled","Admin Cancelled")
                     if UpdTaskResult == True:
                         # Do more stuff here
-                        audit.logging.info("Batch ["+r[0]+"]Cancelled")
+                        audit.logging.info("Batch ["+r[0]+"] Cancelled")
 
             else:
                 resetBatch = "\t\tReset this batch?"
@@ -56,6 +54,14 @@ def manageActiveBatches():
                 audit.logging.debug(resetBatch + " :" + str(resetAnswer))
                 if resetAnswer == True:
                     audit.logging.info("\t\t\tResetting ["+r[0]+"]...")
+                    queueRecordsToUpdate = taskdb.getRecords("TaskQueue","batch_id = '"+r[0]+"'",0)
+                    audit.logging.debug("Cancelled records....")
+                    for upd in queueRecordsToUpdate:
+                        audit.logging.debug(upd)
+                        UpdTaskResult = setTaskReset(upd[0],"New_Pending","Admin Reset")
+                        if UpdTaskResult == True:
+                            # Do more stuff here
+                            audit.logging.info("Batch ["+r[0]+"] Reset")
         print("")
 
 
@@ -81,6 +87,27 @@ def setTaskClosed(taskID,closureStatus="Completed_Success",closureRef="N/A",clos
         return False
 
 
+def setTaskReset(taskID,taskStatus="New_Pending",note="N/A"):
+    audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
+    audit.logging.info("Closing Task ["+str(taskID)+"], setting to ["+taskStatus+"]...")
+    paramslist = []
+    param = ("closed_on","NULL")
+    paramslist.append(param)
+    param = ("note",note)
+    paramslist.append(param)
+    param = ("batch_ID","NULL")
+    paramslist.append(param)
+    statusID = taskdb.getID(tablename="TaskStatus", criteria="status_name = '"+taskStatus+"'", maxrecords=1)
+    param = ("task_status",str(statusID))
+    paramslist.append(param)
+    recsToUpdate = taskdb.updateTasks("task_id='"+str(taskID)+"'",paramslist,0)
+    if recsToUpdate == "Records Updated":
+        audit.logging.debug("Records "+str(taskID)+" updated successfully")
+        return True
+    else:
+        audit.logging.error("Records "+str(taskID)+" update status to "+taskStatus+" FAILED!")
+        return False
+    
 
 def getTaskActiveByBatchID(BatchID):
     audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
@@ -98,8 +125,6 @@ def getTaskActiveBatchIDs():
     for r in queueRecords:
         audit.logging.debug("Retrieved batch ID: "+str(r[0]))
     return queueRecords
-
-
 
 
 def getTaskBatch(batchSize):
@@ -131,7 +156,6 @@ def getTaskBatch(batchSize):
         audit.logging.debug(r)
 
     return queueRecords
-
 
 
 def getPickList(listtype):
