@@ -1,4 +1,5 @@
 from tkinter import Y
+import sys
 import atm_logger as audit
 import atm_common as common
 import atm_taskdb as taskdb
@@ -47,7 +48,7 @@ def main():
 
 
     # taskmgr.listActiveBatches()
-    # print("")
+    print("")
     taskmgr.manageActiveBatches()
 
 
@@ -57,6 +58,7 @@ def main():
 
 
 def saveDummyEmptyTask():
+
     audit.print_line()
     addtaskresult = taskdb.addTask("DoThing")
     audit.logging.info("Added Task ID - " + str(addtaskresult))

@@ -1,4 +1,5 @@
 from tkinter import Y
+import sys
 import atm_logger as audit
 import atm_taskdb as taskdb
 import atm_common as common
@@ -9,6 +10,7 @@ print("script name is " + __name__)
 
 
 def listActiveBatches():
+    audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
     ActiveBatches = getTaskActiveBatchIDs()
     # audit.logging.info(ActiveBatches)
     audit.logging.info("Current active batches....")
@@ -19,6 +21,7 @@ def listActiveBatches():
     
 
 def manageActiveBatches():
+    audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
     ActiveBatches = getTaskActiveBatchIDs()
     # audit.logging.info(ActiveBatches)
     audit.logging.info("Current active batches to manage....")
@@ -38,22 +41,30 @@ def manageActiveBatches():
             audit.logging.debug(cancelBatch + " :" + str(cancelAnswer))
             if cancelAnswer == True:
                 audit.logging.info("\t\t\tCancelling ["+r[0]+"]...")
-                paramslist = []
-                param = ("closed_on",str(datetime.now()))
-                paramslist.append(param)
-                param = ("closure_id","N\A")
-                paramslist.append(param)
-                param = ("closure_ref","Admin Cancelled")
-                paramslist.append(param)
-                statusID = taskdb.getID(tablename="TaskStatus", criteria="status_name = 'Cancelled'", maxrecords=1)
-                param = ("task_status",str(statusID))
-                paramslist.append(param)
-                recsToUpdate = taskdb.updateTasks("batch_id='"+r[0]+"'",paramslist,0)
-                if recsToUpdate == "Records Updated":
-                    queueRecordsUpdated = taskdb.getRecords("TaskQueue","batch_id = '"+r[0]+"'",0)
-                    audit.logging.debug("Cancelled records....")
-                    for upd in queueRecordsUpdated:
-                        audit.logging.debug(upd)
+                queueRecordsToUpdate = taskdb.getRecords("TaskQueue","batch_id = '"+r[0]+"'",0)
+                audit.logging.debug("Cancelled records....")
+                for upd in queueRecordsToUpdate:
+                    audit.logging.debug(upd)
+                    UpdTaskResult = setTaskClosed(upd[0],"Cancelled","Admin Cancelled")
+                    if UpdTaskResult == True:
+                        # Do more stuff here
+                        audit.logging.info("Yay!")
+                # paramslist = []
+                # param = ("closed_on",str(datetime.now()))
+                # paramslist.append(param)
+                # param = ("closure_id","N\A")
+                # paramslist.append(param)
+                # param = ("closure_ref","Admin Cancelled")
+                # paramslist.append(param)
+                # statusID = taskdb.getID(tablename="TaskStatus", criteria="status_name = 'Cancelled'", maxrecords=1)
+                # param = ("task_status",str(statusID))
+                # paramslist.append(param)
+                # recsToUpdate = taskdb.updateTasks("batch_id='"+r[0]+"'",paramslist,0)
+                # if recsToUpdate == "Records Updated":
+                #     queueRecordsUpdated = taskdb.getRecords("TaskQueue","batch_id = '"+r[0]+"'",0)
+                #     audit.logging.debug("Cancelled records....")
+                #     for upd in queueRecordsUpdated:
+                #         audit.logging.debug(upd)
 
             else:
                 resetBatch = "\t\tReset this batch?"
@@ -64,17 +75,42 @@ def manageActiveBatches():
         print("")
 
 
+def setTaskClosed(taskID,closureStatus="Completed_Success",closureRef="N/A",closureID="N/A"):
+    audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
+    audit.logging.info("Closing Task ["+str(taskID)+"], setting to ["+closureStatus+"]...")
+    paramslist = []
+    param = ("closed_on",str(datetime.now()))
+    paramslist.append(param)
+    param = ("closure_id",closureID)
+    paramslist.append(param)
+    param = ("closure_ref",closureRef)
+    paramslist.append(param)
+    statusID = taskdb.getID(tablename="TaskStatus", criteria="status_name = '"+closureStatus+"'", maxrecords=1)
+    param = ("task_status",str(statusID))
+    paramslist.append(param)
+    recsToUpdate = taskdb.updateTasks("task_id='"+str(taskID)+"'",paramslist,0)
+    if recsToUpdate == "Records Updated":
+        audit.logging.debug("Records "+str(taskID)+" updated successfully")
+        return True
+    else:
+        audit.logging.error("Records "+str(taskID)+" update status to "+closureStatus+" FAILED!")
+        return False
+
 
 
 def getTaskActiveByBatchID(BatchID):
-    queueRecords = taskdb.getCustomRecordList("Select * FROM atm.vw_tasks_active WHERE batch_id='"+BatchID+"'")
+    audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
+    sql = "Select * FROM atm.vw_tasks_active WHERE batch_id='"+BatchID+"'"
+    queueRecords = taskdb.getCustomRecordList(sql)
     for r in queueRecords:
         audit.logging.debug(r[0])
     return queueRecords
 
 
 def getTaskActiveBatchIDs():
-    queueRecords = taskdb.getCustomRecordList("Select batch_id FROM atm.vw_tasks_active WHERE batch_id IS NOT NULL Group By batch_id")
+    audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
+    sql = "Select batch_id FROM atm.vw_tasks_active WHERE batch_id IS NOT NULL Group By batch_id"
+    queueRecords = taskdb.getCustomRecordList(sql)
     for r in queueRecords:
         audit.logging.debug(r[0])
     return queueRecords
@@ -83,6 +119,7 @@ def getTaskActiveBatchIDs():
 
 
 def getTaskBatch(batchSize):
+    audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
     date_string = f'{datetime.now():%Y-%m-%d_%H-%M-%S%z}'
     thisBatchId = "Batch_"+date_string
     audit.logging.debug("Batch ID: "+thisBatchId)
@@ -114,6 +151,7 @@ def getTaskBatch(batchSize):
 
 
 def getPickList(listtype):
+    audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
     audit.print_subheading("Task "+ listtype + " List")
     Records = taskdb.getRecords("Task" + listtype)
 
@@ -124,3 +162,5 @@ def getPickList(listtype):
     audit.print_line()
    
     return Records
+
+

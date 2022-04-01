@@ -75,6 +75,7 @@ def setup_logging(log_dir):
     exp_debug_file_handler = RotatingFileHandler(
         '{}exp_debug.log'.format(log_dir), maxBytes=10**6, backupCount=5)
     exp_debug_file_handler.setLevel(logging.DEBUG)
+    # exp_debug_file_handler.setLevel(logging.INFO)
     exp_debug_file_handler.setFormatter(CustomFileFormatter())
 
     exp_errors_file_handler = RotatingFileHandler(
