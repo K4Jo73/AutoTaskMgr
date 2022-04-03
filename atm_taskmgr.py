@@ -34,35 +34,40 @@ def manageActiveBatches():
         actionAnswer = common.yes_or_no(takeAction)
         audit.logging.debug(takeAction + " :" + str(actionAnswer))
         if actionAnswer == True:
-            cancelBatch = "\t\tCancel this batch?"
-            cancelAnswer = common.yes_or_no(cancelBatch)
-            audit.logging.debug(cancelBatch + " :" + str(cancelAnswer))
-            if cancelAnswer == True:
-                audit.logging.info("\t\t\tCancelling ["+r[0]+"]...")
-                queueRecordsToUpdate = taskdb.getRecords("TaskQueue","batch_id = '"+r[0]+"'",0)
-                audit.logging.debug("Cancelled records....")
-                for upd in queueRecordsToUpdate:
-                    audit.logging.debug(upd)
-                    UpdTaskResult = setTaskClosed(upd[0],"Cancelled","Admin Cancelled")
-                    if UpdTaskResult == True:
-                        # Do more stuff here
-                        audit.logging.info("Batch ["+r[0]+"] Cancelled")
-
-            else:
-                resetBatch = "\t\tReset this batch?"
-                resetAnswer = common.yes_or_no(resetBatch)
-                audit.logging.debug(resetBatch + " :" + str(resetAnswer))
-                if resetAnswer == True:
-                    audit.logging.info("\t\t\tResetting ["+r[0]+"]...")
-                    queueRecordsToUpdate = taskdb.getRecords("TaskQueue","batch_id = '"+r[0]+"'",0)
-                    audit.logging.debug("Cancelled records....")
-                    for upd in queueRecordsToUpdate:
-                        audit.logging.debug(upd)
-                        UpdTaskResult = setTaskReset(upd[0],"New_Pending","Admin Reset")
-                        if UpdTaskResult == True:
-                            # Do more stuff here
-                            audit.logging.info("Batch ["+r[0]+"] Reset")
+            wasActioned = batchAction("Cancel",r[0])
+            if wasActioned == False:
+                wasActioned = batchAction("Reset",r[0])
         print("")
+
+
+def batchAction(actionName,batchName):
+    actionPrompt = "\t\t"+actionName+" this batch?"
+    actionAnswer = common.yes_or_no(actionPrompt)
+    audit.logging.debug(actionPrompt + " :" + str(actionAnswer))
+    if actionAnswer == True:
+        audit.logging.info("\t\t\tApplying "+actionName+" action ["+batchName+"]...")
+        queueRecordsToUpdate = taskdb.getRecords("TaskQueue","batch_id = '"+batchName+"'",0)
+        audit.logging.debug("Starting to process records....")
+        for upd in queueRecordsToUpdate:
+            audit.logging.debug(upd)
+            match actionName:
+                case "Cancel":
+                    UpdTaskResult = setTaskClosed(upd[0],"Cancelled","Admin Cancelled")
+                case "Reset":
+                    UpdTaskResult = setTaskReset(upd[0],"New_Pending","Admin Reset")
+                case _:
+                    audit.logging.info("Invalid action type provided ["+actionName+"] - Ignored")
+                    UpdTaskResult = False
+
+            if UpdTaskResult == True:
+                audit.logging.info("Batch action "+actionName+" to ["+batchName+"] successful")
+            else:
+                audit.logging.debug("Record update for ["+batchName+"]-["+upd[0]+"] failed")
+        return True
+    else:
+        audit.logging.debug("Option to take "+actionName+" action was refused")
+        return False
+
 
 
 def setTaskClosed(taskID,closureStatus="Completed_Success",closureRef="N/A",closureID="N/A"):
