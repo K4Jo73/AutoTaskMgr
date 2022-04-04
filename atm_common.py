@@ -7,9 +7,11 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 print("script name is " + __name__)
-smtp_server = "smtp.gmail.com"
+# smtp_server = "smtp.gmail.com"
+smtp_server = "smtp.office365.com"
 port = 587  # For starttls
-sender_email = "k4jo73@gmail.com"
+# sender_email = "k4jo73@gmail.com"
+sender_email = "karl.jones@capgemini.com"
 password = os.environ.get('PythonGMailPwd')
 defaultMailSubject = "Auto Task Manager Alert"
 MailMessageIntro = "This message was sent by Auto Task Manager"

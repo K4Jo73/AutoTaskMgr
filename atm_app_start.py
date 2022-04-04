@@ -1,7 +1,7 @@
 from tkinter import Y
 import sys
 import atm_logger as audit
-# import atm_common as common
+import atm_common as common
 import atm_taskdb as taskdb
 import atm_taskmgr as taskmgr
 # from datetime import datetime
@@ -63,11 +63,11 @@ def main():
 
 
 
-    taskmgr.listActiveBatches()
-    print("")
-    taskmgr.manageActiveBatches()
+    # taskmgr.listActiveBatches()
+    # print("")
+    # taskmgr.manageActiveBatches()
 
-    # common.send_Mail("karl.jones@capgemini.com","Something happened")
+    common.send_Mail("karl.jones@capgemini.com","Something happened")
 
 
    

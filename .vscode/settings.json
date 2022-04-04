@@ -1,3 +1,6 @@
 {
-    "diffEditor.codeLens": true
+    "diffEditor.codeLens": true,
+    "workbench.colorTheme": "Monokai Dimmed",
+    "editor.formatOnSaveMode": "file",
+    "editor.formatOnSave": true
 }
