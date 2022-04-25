@@ -28,6 +28,7 @@ taskBatchSize = 3
 # TODO: Storage and use of passwords
 # TODO: Status report list active tasks, allow for drill down if needed
 # TODO: Management Menu
+# TODO: Bypass menu straight to action
 
 
 def main():
