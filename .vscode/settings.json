@@ -1,6 +1,9 @@
 {
     "diffEditor.codeLens": true,
-    "workbench.colorTheme": "Monokai Dimmed",
+    "workbench.colorTheme": "Default Dark+",
     "editor.formatOnSaveMode": "file",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    }
 }
