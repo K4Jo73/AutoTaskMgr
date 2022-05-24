@@ -26,11 +26,11 @@ def clear():
 
     # for windows
     if name == 'nt':
-        _ = system('cls')
+        _ = os.system('cls')
 
     # for mac and linux(here, system.name is 'posix')
     else:
-        _ = system('clear')
+        _ = os.system('clear')
 
 
 def yes_or_no(question, default_no=True):

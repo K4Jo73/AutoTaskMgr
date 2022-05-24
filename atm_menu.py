@@ -8,10 +8,10 @@ print("script name is " + __name__)
 # # ?: Think I need to define a class here and make an easy way to pump in a list of menu structures
 optionNos = [1, 2, 3, 4, 9]
 optionNames = ["List Active Batches",
-               "Manage Active Batches", "Three", "Four", "Exit"]
-optionTypes = ["runFunction", "runFunction", "C", "D", "X"]
+               "Manage Active Batches", "Add Dummy Task", "Send Test Email", "Exit"]
+optionTypes = ["runFunction", "runFunction", "runFunction", "", "X"]
 optionValues = ["atm_taskmgr.listActiveBatches",
-                "atm_taskmgr.manageActiveBatches", "C", "D", "X"]
+                "atm_taskmgr.manageActiveBatches", "atm_taskmgr.saveDummyDetailedTask", "atm_common.send_Mail", "X"]
 
 
 def loadMainMenu():
