@@ -131,3 +131,6 @@ dmypy.json
 
 # My Stuff
 .vscode/
+.vscode/launch.json
+.vscode/settings.json
+.vscode/extensions.json
