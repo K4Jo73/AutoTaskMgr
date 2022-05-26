@@ -44,24 +44,24 @@ def main():
     # saveDummyDetailedTask()
     # saveDummyDetailedTask()
 
-    taskdb.getTableColumns("vw_tasks_active")
+    # taskdb.getTableColumns("vw_tasks_active")
     # taskdb.getTableColumns("task_queue")
 
     # for r in recs:
     #     print(r[1],r[2],r[5])
 
-    batchToDo = taskmgr.getTaskBatch(taskBatchSize)
-    audit.logging.info(batchToDo)
-    print("")
-    audit.logging.info("Batch Records")
-    print('=' * 50)
-    for rec in batchToDo:
-        audit.logging.info("ID: "+str(rec[0]))
-        audit.logging.info("BatchID: "+str(rec[1]))
-        audit.logging.info("Note: "+str(rec[4]))
-        audit.logging.info("Source Ref: "+str(rec[8]))
-        print('-' * 50)
-    print("")
+    # batchToDo = taskmgr.getTaskBatch(taskBatchSize)
+    # audit.logging.info(batchToDo)
+    # print("")
+    # audit.logging.info("Batch Records")
+    # print('=' * 50)
+    # for rec in batchToDo:
+    #     audit.logging.info("ID: "+str(rec[0]))
+    #     audit.logging.info("BatchID: "+str(rec[1]))
+    #     audit.logging.info("Note: "+str(rec[4]))
+    #     audit.logging.info("Source Ref: "+str(rec[8]))
+    #     print('-' * 50)
+    # print("")
 
     # taskmgr.listActiveBatches()
     # print("")

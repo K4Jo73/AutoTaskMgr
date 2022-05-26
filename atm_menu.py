@@ -26,7 +26,7 @@ class MenuOption:
         self.id = "".join(random.choices(string.ascii_uppercase, k=12))
 
     def showFullRecord(self):
-        audit.logging.info("\n\nOutputting Full Catalog Record")
+        audit.logging.info("\n\nOutputting Full Record")
         for k, v in zip(self.__dict__.keys(), self.__dict__.values()):
             if not k.startswith('_'):
                 if k.__eq__('id'):
@@ -47,7 +47,7 @@ def generate_id() -> str:
 
 
 def addMenuOption(No, Name, Type, Value, Params=[]):
-    opt = MenuOption(
+    option = MenuOption(
         # id=generate_id(),
         optionNo=No,
         optionName=Name,
@@ -55,7 +55,7 @@ def addMenuOption(No, Name, Type, Value, Params=[]):
         optionValue=Value,
         optionParams=Params
     )
-    return opt
+    return option
 
 
 def loadMainMenu():
@@ -90,10 +90,6 @@ def loadMainMenu():
         "Quit",
         ""))
 
-    # for x in menuOptions:
-    #     audit.logging.info(x.optionName)
-    audit.logging.info(f'\nMenu Options: {len(menuOptions)}')
-
     loadMenu(menuOptions)
 
 
@@ -103,43 +99,49 @@ def loadMenu(options):
     result = "Start"
     while result != "Quit":
         common.clear()
+        audit.print_heading('Automation Task Manager')
         optionNos = []
         for x in options:
             opt = "[" + str(x.optionNo) + "] " + x.optionName
-            optionNos.append(x.optionNo)
             audit.logging.info(opt)
+            optionNos.append(x.optionNo)
 
-        # print(optionNos)
-        selection = input("Please Select From " + str(optionNos) + ":")
-        if selection == "":
-            selection = "0"
-        if selection in str(optionNos):
-            for opt in options:
-                audit.logging.debug(
-                    "\nChecking Option [" + selection + "] against [" + str(opt) + "]")
-                if int(selection) == opt.optionNo:
-                    audit.logging.info(
-                        "\n\nRunning Option [" + selection + "]")
-                    result = runMenuAction(
-                        opt.optionName, opt.optionType, opt.optionValue, opt.optionParams)
-                    if result == "Quit":
-                        break
-                    # else:
-                    #     return
-                else:
-                    audit.logging.debug(
-                        "Option [" + selection + "] is not a match")
-        else:
-            print("Unknown Option Selected!")
-
-        if result != "Quit":
+        menuResult = waitMenuChoice(optionNos, options)
+        audit.logging.debug("Menu execution result: "+menuResult)
+        if menuResult != "Quit":
             input("\n\tPress Return To Reload Menu\n")
+        else:
+            break
+
+
+def waitMenuChoice(optionNos, options):
+    selection = input("Please Select From " + str(optionNos) + ":")
+    if selection == "":
+        selection = "0"
+    if selection in str(optionNos):
+        for opt in options:
+            audit.logging.debug(
+                "Checking Option [" + selection + "] against [" + str(opt) + "]")
+            if int(selection) == opt.optionNo:
+                audit.logging.debug(
+                    "Running Valid Option [" + selection + " - " + opt.optionName + "]")
+                choiceResult = runMenuAction(
+                    opt.optionName, opt.optionType, opt.optionValue, opt.optionParams)
+                audit.logging.debug(
+                    "Choice execution result: "+choiceResult)
+                return choiceResult
+            else:
+                audit.logging.debug(
+                    "Option [" + selection + "] is not a match")
+    else:
+        audit.logging.info("Invalid Option Number Selected!")
+        return "Invalid Option Number Selected"
 
 
 def runMenuAction(actionName, actionType, actionValue, actionParams=[]):
     audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
-    audit.logging.info("Running menu action: "+actionName +
-                       " - "+actionType+" - "+actionValue)
+    audit.logging.debug("Matching menu action: ["+actionName +
+                        " - "+actionType+" - "+actionValue + "]")
     print("")
     match actionType:
         case "loadMenu":
@@ -150,18 +152,19 @@ def runMenuAction(actionName, actionType, actionValue, actionParams=[]):
             return "Quit"
         case "runFunction":
             audit.logging.info(
-                "\tRunning ["+actionName+"]")  # Must have no more than 1 parameter
+                "Running ["+actionName+"]")  # Must have no more than 1 parameter
             if actionValue.find(".") == -1:
                 audit.logging.debug(
-                    "\tAction value does NOT call module function")
+                    "Action value does NOT call module function")
                 # locals()[actionValue]()
                 # globals()[actionValue]()
             else:
-                audit.logging.debug("\tAction value does call module function")
+                audit.logging.debug("Action value calls module function")
                 actionParts = actionValue.split(".")
                 module = __import__(actionParts[0])
                 func = getattr(module, actionParts[1])
-                print(actionParams)
+                audit.logging.debug(
+                    "Provided parameters: ["+str(actionParams)+"]")
                 if not actionParams:
                     func()
                 else:
