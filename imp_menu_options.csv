@@ -1,0 +1,6 @@
+"option_id";"menu_id";"no";"name";"type";"value";"has_params"
+1;1;"1";"List Active Batches";"Func";"taskmgr.listActiveBatches";0
+2;1;"2";"Manage Active Batches";"Func";"taskmgr.manageActiveBatches";0
+3;1;"3";"Add Dummy Task";"Func";"taskmgr.saveDummyDetailedTask";0
+4;1;"4";"Send Test Email";"Func";"common.send_Mail";1
+5;1;"9";"Exit Automation Task Manager";"Quit";"N/A";0
