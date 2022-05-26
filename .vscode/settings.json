@@ -1,6 +1,6 @@
 {
     "diffEditor.codeLens": true,
-    "workbench.colorTheme": "Default Dark+",
+    "workbench.colorTheme": "Panda Syntax",
     "editor.formatOnSaveMode": "file",
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {

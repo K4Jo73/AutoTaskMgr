@@ -61,7 +61,7 @@ def addMenuOption(No, Name, Type, Value, Params=[]):
 def loadMainMenu():
     audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
 
-    # This should eventually be filled by a SQL fetch
+    # * This should eventually be filled by a SQL fetch
     menuOptions.append(addMenuOption(
         1,
         "List Active Batches",

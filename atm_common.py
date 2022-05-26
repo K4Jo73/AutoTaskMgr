@@ -21,7 +21,6 @@ MailMessageIntro = "This message was sent by Auto Task Manager"
 MailMessageOutro = "Thanks"
 
 
-# define our clear function
 def clear():
 
     # for windows
@@ -48,10 +47,12 @@ def yes_or_no(question, default_no=True):
 
 def send_Mail(receiver_email, message, subject=defaultMailSubject):
     audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
+    # * Need to improve hoe target mail server is selected
     # sender_email = "k4jo73@gmail.com"
     # receiver_email = "k4jo73@outlook.com"
     # smtp_server = "smtp.gmail.com"
     # port = 587  # For starttls
+    # * THIS IS TEMP PASSWORD SOLUTION
     password = input("Type your password and press enter: ")
     # password = system.environ.get('PythonGMailPwd')
 
@@ -61,9 +62,7 @@ def send_Mail(receiver_email, message, subject=defaultMailSubject):
     part2 = MIMEText(msgHTML, 'html')
     audit.logging.info("Preparing mail to send from " +
                        sender_email+" to "+receiver_email)
-    # msg = EmailMessage()
     msg = MIMEMultipart('alternative')
-    # msg.set_content(MailMessageIntro+message+MailMessageIntro)
     msg.attach(part1)
     msg.attach(part2)
     msg['Subject'] = subject
