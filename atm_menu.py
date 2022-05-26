@@ -1,3 +1,4 @@
+import os
 import random
 import string
 import sys
@@ -11,6 +12,7 @@ print("script name is " + __name__)
 
 
 menuOptions = []
+moduleFiles = []
 
 
 @dataclass(kw_only=True)
@@ -43,18 +45,38 @@ class MenuOption:
 
 
 def generate_id() -> str:
+    audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
     return "".join(random.choices(string.ascii_uppercase, k=12))
 
 
-def addMenuOption(No, Name, Type, Value, Params=[]):
+def addMenuOption(No, Name, Type="Quit", Value="", Params=[]):
+    audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
+    # The match statements below are to make the calls to this function simpler
+
+    match Type:
+        case "Menu":
+            saveType = "LoadMenu"
+            saveValue = Value
+        case "Func":
+            saveType = "runFunction"
+            actionParts = Value.split(".")
+            saveValue = "atm_"+actionParts[0]+"."+actionParts[1]
+        case _:
+            saveType = Type
+            saveValue = Value
+
+    audit.logging.debug("Type ["+Type+"] changed to ["+saveType+"]")
+    audit.logging.debug("Value ["+Value+"] changed to ["+saveValue+"]")
+
     option = MenuOption(
         # id=generate_id(),
         optionNo=No,
         optionName=Name,
-        optionType=Type,
-        optionValue=Value,
+        optionType=saveType,
+        optionValue=saveValue,
         optionParams=Params
     )
+    option.showFullRecord()
     return option
 
 
@@ -62,34 +84,16 @@ def loadMainMenu():
     audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
 
     # * This should eventually be filled by a SQL fetch
+    menuOptions.append(addMenuOption(1, "List Active Batches",
+                       "Func", "taskmgr.listActiveBatches"))
     menuOptions.append(addMenuOption(
-        1,
-        "List Active Batches",
-        "runFunction",
-        "atm_taskmgr.listActiveBatches"))
-    menuOptions.append(addMenuOption(
-        2,
-        "Manage Active Batches",
-        "runFunction",
-        "atm_taskmgr.manageActiveBatches"))
-    menuOptions.append(addMenuOption(
-        3,
-        "Add Dummy Task",
-        "runFunction",
-        "atm_taskmgr.saveDummyDetailedTask"))
+        2, "Manage Active Batches", "Func", "taskmgr.manageActiveBatches"))
+    menuOptions.append(addMenuOption(3, "Add Dummy Task",
+                       "Func", "taskmgr.saveDummyDetailedTask"))
     params = ["karl.jones@capgemini.com", "Something happened"]
-    menuOptions.append(addMenuOption(
-        4,
-        "Send Test Email",
-        "runFunction",
-        "atm_common.send_Mail",
-        params))
-    menuOptions.append(addMenuOption(
-        9,
-        "Exit",
-        "Quit",
-        ""))
-
+    menuOptions.append(addMenuOption(4, "Send Test Email",
+                       "Func", "common.send_Mail", params))
+    menuOptions.append(addMenuOption(9, "Exit", "Quit", ""))
     loadMenu(menuOptions)
 
 
@@ -115,6 +119,8 @@ def loadMenu(options):
 
 
 def waitMenuChoice(optionNos, options):
+    audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
+
     selection = input("Please Select From " + str(optionNos) + ":")
     if selection == "":
         selection = "0"
@@ -140,6 +146,7 @@ def waitMenuChoice(optionNos, options):
 
 def runMenuAction(actionName, actionType, actionValue, actionParams=[]):
     audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
+
     audit.logging.debug("Matching menu action: ["+actionName +
                         " - "+actionType+" - "+actionValue + "]")
     print("")

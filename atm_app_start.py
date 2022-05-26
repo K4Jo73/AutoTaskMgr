@@ -25,8 +25,10 @@ taskBatchSize = 3
 # TODO: Reset a single task
 # TODO: Storage and use of passwords
 # TODO: Settings for execution like mail server etc. use db maybe and add mgt in menus
+# Active: Menu to call more menus - Use db to store
 # TODO: Status report list active tasks, allow for drill down if needed
-# Active: Management Menu
+# Done: Management Menu
+# TODO: Want to be able to trigger prompt params when menu triggers a function (may just add to the functions)
 # TODO: Bypass menu straight to action
 
 
