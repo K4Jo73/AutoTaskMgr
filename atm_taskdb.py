@@ -5,7 +5,7 @@ import mysql.connector
 
 import atm_logger as audit
 
-# ! run this in cmd or Powershell to install
+# */99+* run this in cmd or Powershell to install
 # * python -m pip install mysql-connector-python
 print("script name is " + __name__)
 # audit.logging.info("script name is " + __name__)
@@ -25,8 +25,28 @@ def getCustomRecordList(sql):
         # raise
 
 
+def listRecords(tablename, criteria="", maxrecords=0):
+    audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
+
+    try:
+        cols = getTableColumns(tablename)
+        audit.logging.debug("Columns: "+str(cols))
+        results = getRecords(tablename, criteria, maxrecords)
+        audit.logging.debug("Results: "+str(results))
+        for result in results:
+            print("")
+            for col, val in zip(cols, result):
+                audit.logging.info(str(col[0])+": "+str(val))
+
+    except BaseException as err:
+        audit.logging.error(sys._getframe().f_code.co_name +
+                            f" - Unexpected {err=}, {type(err)=}")
+        # raise
+
+
 def getRecords(tablename, criteria="", maxrecords=0):
     audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
+
     try:
         sql = getListSQL(tablename, criteria, maxrecords)
         records = runDbSelect(sql)
@@ -38,6 +58,38 @@ def getRecords(tablename, criteria="", maxrecords=0):
         # raise
 
 
+def resolveTableName(tablename):
+    audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
+
+    match tablename:
+        case "TaskStatus":
+            trueTableName = "task_status"
+        case "TaskType":
+            trueTableName = "task_type"
+        case "TaskQueue":
+            trueTableName = "task_queue"
+        case "TasksActive":
+            trueTableName = "vw_tasks_active"
+        case "TasksClosed":
+            trueTableName = "vw_tasks_closed"
+        case "TasksHold":
+            trueTableName = "vw_tasks_hold"
+        case "TasksError":
+            trueTableName = "vw_tasks_error"
+        case "Menus":
+            trueTableName = "menu_header"
+        case "MenuOptions":
+            trueTableName = "menu_options"
+        case "MenuOptionParams":
+            trueTableName = "vw_menu_option_params"
+        case _:
+            trueTableName = "INVALID"
+            # trueTableName = "SELECT 'Invalid List Type Provided [" + \
+            #     tablename + "]';"
+
+    return trueTableName
+
+
 def getListSQL(tablename, criteria="", maxrecords=0, isselect=1):
     audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
 
@@ -46,25 +98,7 @@ def getListSQL(tablename, criteria="", maxrecords=0, isselect=1):
     if isselect == 1:
         script = "SELECT * FROM " + schemaname
 
-        match tablename:
-            case "TaskStatus":
-                script += ".task_status"
-            case "TaskType":
-                script += ".task_type"
-            case "TaskQueue":
-                script += ".task_queue"
-            case "TasksActive":
-                script += ".vw_tasks_active"
-            case "TasksClosed":
-                script += ".vw_tasks_closed"
-            case "TasksHold":
-                script += ".vw_tasks_hold"
-            case "TasksError":
-                script += ".vw_tasks_error"
-            case _:
-                script = "SELECT 'Invalid List Type Provided [" + \
-                    tablename + "]';"
-                return script
+    script += "." + resolveTableName(tablename)
 
     if criteria != "":
         script += " WHERE " + criteria
@@ -79,12 +113,20 @@ def getListSQL(tablename, criteria="", maxrecords=0, isselect=1):
 
 def getTableColumns(tablename):
     audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
+
+    tbl = resolveTableName(tablename)
+    audit.logging.debug(
+        "Provided tablename ["+tablename+"] resolved to ["+tbl+"]")
+
     sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = Database() AND TABLE_NAME = '" + \
-        tablename + "' ;"
+        tbl + "' ;"
+    audit.logging.debug("SQL: "+sql)
+
     records = runDbSelect(sql)
     for rec in records:
         # print(rec[0])
-        audit.logging.info(rec[0])
+        audit.logging.debug(rec[0])
+    return records
 
 
 def getID(tablename, criteria="", maxrecords=1):

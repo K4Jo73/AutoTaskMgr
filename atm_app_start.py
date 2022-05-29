@@ -40,18 +40,18 @@ def main():
 
 def oldTestCode():
     # * THIS IS OLD LINES OF CODE USED TO TEST FUNCTIONALITY
-    taskdb.getTableColumns("task_status")
+    taskdb.getTableColumns("TaskStatus")
     taskdb.addStatus("DoingEvenMoreStuff", "test")
     taskmgr.getPickList("Status")
 
-    taskdb.getTableColumns("task_type")
+    taskdb.getTableColumns("TaskType")
     taskdb.addType("DoSomething", "test")
     taskmgr.getPickList("Type")
 
-    taskdb.getTableColumns("task_queue")
+    taskdb.getTableColumns("TaskQueue")
 
-    taskdb.getTableColumns("vw_tasks_active")
-    taskdb.getTableColumns("task_queue")
+    taskdb.getTableColumns("TasksActive")
+    taskdb.getTableColumns("TaskQueue")
 
     batchToDo = taskmgr.getTaskBatch(taskBatchSize)
     audit.logging.info(batchToDo)

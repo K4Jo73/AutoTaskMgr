@@ -7,6 +7,7 @@ from operator import and_
 
 import atm_common as common
 import atm_logger as audit
+import atm_taskdb as db
 
 print("script name is " + __name__)
 
@@ -80,24 +81,43 @@ def addMenuOption(No, Name, Type="Quit", Value="", Params=[]):
     return option
 
 
-def loadMainMenu():
+def loadMainMenu(menuId="1"):
     audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
 
+    dbMenuHead = db.getRecords("Menus", "menu_id="+menuId, 1)
+    audit.logging.debug("Menu Head: "+str(dbMenuHead[0][1]))
+    dbMenuHOptions = db.getRecords("MenuOptions", "menu_id="+menuId)
+    for dbOpt in dbMenuHOptions:
+        audit.logging.debug("Adding option: "+str(dbOpt))
+        menuOptions.append(addMenuOption(
+            dbOpt[2], dbOpt[3], dbOpt[4], dbOpt[5]))
+
+    # menuHead = db.getRecords("Menus", "menu_id="+menuId)
+
     # * This should eventually be filled by a SQL fetch
-    menuOptions.append(addMenuOption(1, "List Active Batches",
-                       "Func", "taskmgr.listActiveBatches"))
-    menuOptions.append(addMenuOption(
-        2, "Manage Active Batches", "Func", "taskmgr.manageActiveBatches"))
-    menuOptions.append(addMenuOption(3, "Add Dummy Task",
-                       "Func", "taskmgr.saveDummyDetailedTask"))
-    params = ["karl.jones@capgemini.com", "Something happened"]
-    menuOptions.append(addMenuOption(4, "Send Test Email",
-                       "Func", "common.send_Mail", params))
-    menuOptions.append(addMenuOption(9, "Exit", "Quit", ""))
-    loadMenu(menuOptions)
+    # menuOptions.append(addMenuOption(1, "List Active Batches",
+    #                    "Func", "taskmgr.listActiveBatches"))
+    # menuOptions.append(addMenuOption(
+    #     2, "Manage Active Batches", "Func", "taskmgr.manageActiveBatches"))
+    # menuOptions.append(addMenuOption(3, "Add Dummy Task",
+    #                    "Func", "taskmgr.saveDummyDetailedTask"))
+    # params = ["karl.jones@capgemini.com", "Something happened"]
+    # menuOptions.append(addMenuOption(4, "Send Test Email",
+    #                    "Func", "common.send_Mail", params))
+    # params = ["Menus", "menu_id=1"]
+    # menuOptions.append(addMenuOption(
+    #     5, "menu list", "Func", "taskdb.listRecords", params))
+    # params = ["MenuOptions", "menu_id=1"]
+    # menuOptions.append(addMenuOption(
+    #     6, "menu option list", "Func", "taskdb.listRecords", params))
+    # params = ["MenuOptionParams"]
+    # menuOptions.append(addMenuOption(
+    #     7, "menu option param list", "Func", "taskdb.listRecords", params))
+    # menuOptions.append(addMenuOption(9, "Exit", "Quit", ""))
+    loadMenu(dbMenuHead[0][1], menuOptions)
 
 
-def loadMenu(options):
+def loadMenu(title, options):
     audit.logging.debug("["+sys._getframe().f_code.co_name+"]")
 
     result = "Start"
@@ -128,7 +148,7 @@ def waitMenuChoice(optionNos, options):
         for opt in options:
             audit.logging.debug(
                 "Checking Option [" + selection + "] against [" + str(opt) + "]")
-            if int(selection) == opt.optionNo:
+            if selection == opt.optionNo:
                 audit.logging.debug(
                     "Running Valid Option [" + selection + " - " + opt.optionName + "]")
                 choiceResult = runMenuAction(
