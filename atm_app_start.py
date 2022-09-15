@@ -35,6 +35,9 @@ taskBatchSize = 3
 def main():
     audit.setup_logging("./logs/")
     audit.print_heading('Automation Task Manager')
+    batchToDo = taskmgr.getTaskBatch(taskBatchSize)
+    batchToDo = taskmgr.getTaskBatch(taskBatchSize)
+
     menu.loadMainMenu()
 
 
